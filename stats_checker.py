@@ -5,7 +5,6 @@ import numpy as np
 
 
 
-# calculates RMSE between predicted and observed values
 def rmseCheck(predicted, observed):
     """ Calculates and returns the root mean square error of the predicted vs observed """
     errorsSquared = list(map(lambda x, y: (x-y)**2, predicted, observed))
@@ -30,7 +29,6 @@ def getStatistic(predicted, observed, statistic):
     elif statistic == "NME":
         return rmseCheck(predicted, observed)   
 
-# calculating RMSE between the predicted and observed values at values above 95% on the observed
 def check95(predicted, observed, statistic="RMSE"):
     """ Calculates the specified statistic for all points above the 95th percentile """
     p95 = np.percentile(observed, 95)
@@ -42,7 +40,6 @@ def check95(predicted, observed, statistic="RMSE"):
     return getStatistic(filteredPredicted, filteredObserved, statistic)
 
 
-# calculates RMSE in between startTime and endTime (inclusive)
 def checkByTime(predicted, observed, datetimes, hour, statistic="RMSE"):
     """ Calculates the specified statistic for all points at the specified hour """
     indices = [i for i in range(len(observed)) if datetimes[i].hour == hour]
@@ -67,35 +64,41 @@ def check12Ato4A(predicted, observed, datetimes, statistic="RMSE"):
     return getStatistic(filteredPredicted, filteredObserved, statistic)
 
 
-# TODO: add other stats
+# TODO: test this
 def getStatDF(predictedList, observed, names=None, timestampIndex=None, timesToTest=None, statsList=["RMSE", "NMB", "NME"]):
     """ 
     Generates a dataframe with different statistical values 
 
     @param: predictList - the list of predictions from different models
-    @param: ovserved - 
+    @param: ovserved - the observed values to compare the predicted with
+    @param: names - the name of each model in predictedList
+    @param: timestampIndex - list of timestamps corresponding with each measurement/prediction
+    @param: timesToTest - the list of times to calculate correlation at (as a separate test)
+    @param: statList - the list of statistical tests to check correlation by
     @return: a dataframe with the calculated statistics for each model
     """
 
+    statDF = pd.DataFrame()
 
-    rmseList = []
-    rmse95List = []
+    for stat in statsList:
+        rmseList = []
+        rmse95List = []
 
-    for pred in predictedList:
-        rmseList.append(rmseCheck(pred, observed))
-        rmse95List.append(rmse95(pred, observed))
+        for pred in predictedList:
+            rmseList.append(rmseCheck(pred, observed, statistic=stat))
+            rmse95List.append(check95(pred, observed, statistic=stat))
 
-    statDF = pd.DataFrame({'RMSE': rmseList,
-                  'RMSE 95%': rmse95List})
-  
-    if timesToTest is not None:
-        for timeToTest in timesToTest:
-            rmseByHourList = []
+        statDF[stat] = rmseList
+        statDF[stat+" 95%"] = rmse95List
+    
+        if timeToTest is not None:
+            for timeToTest in timesToTest:
+                rmseByHourList = []
 
-            for pred in predictedList:
-                rmseByHourList.append(rmseByTime(pred, observed, timestampIndex, timeToTest))
+                for pred in predictedList:
+                    rmseByHourList.append(checkByTime(pred, observed, timestampIndex, timeToTest, statistic=stat))
 
-            statDF["RMSE Hour="+str(timeToTest)] = rmseByHourList
+                statDF["RMSE Hour="+str(timeToTest)] = rmseByHourList
 
     if names is not None:
         statDF['RF Test'] = names

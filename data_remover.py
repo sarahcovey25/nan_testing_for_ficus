@@ -41,25 +41,34 @@ def makeRemovedAtTime(df, colToRemove, hourToRemove, enddate=None, percentPoints
     return (newDF, pointsToRemove)
 
 
-## TODO: figure out whats going on this this
-def getAdjacentPoints(df, colToRemove, startPoint, numPoints, hourChange=1, dayChange=0):
+def getAdjacentPoints(startPoint, numPoints, hourChange=1, dayChange=0):
+    """ helper function for removePointsInPattern.
+    creates and returns a list of points of length numPoints starting at startPoint, each hourChange hours aparf"""
     timeChange = datetime.timedelta(hours=hourChange, days=dayChange)
     pointsToRemove = [startPoint + timeChange*i for i in range(0, numPoints)]
-
-    # newDF = removePoints(df, colToRemove, pointsToRemove)
     return pointsToRemove
 
 # assumes time per cycle is greater than cycleLength
 # if hoursPercycle and daysPerCycle remain unchanged, will set cycle time to one day
-# TODO: docstring this
 def removePointsInPattern(df, colToRemove, startPoint, cycleLength, numCycles=1, hoursPerCycle=0, daysPerCycle=0):
+    """ 
+    copies the dataframe and removes points in 
+
+    @param: df - the dataframe to copy and remove points from
+    @param: colToRemove - the name of the column from which to remove data (ex: 'Ozone')
+    @param: startPoint - the first point to remove
+    @param: cycleLength - number of removed points per cycle
+    @param: hoursPerCycle - number of hours in each repeating block of NaNs and data points (gets added to daysPerCycle)
+    @param: daysPerCycle - number of days in each repeating block of NaNs and data points (defaults to 1 if both hoursPerCycle and daysPerCycle are left as 0)
+    @return: a new dataframe with the points in pointsToRemove replaced with NaN
+    """
 
     if hoursPerCycle == 0 and daysPerCycle == 0:
         daysPerCycle = 1
 
     pointsToRemove = []
     for i in range(cycleLength):
-        pointsToRemove += getAdjacentPoints(df, colToRemove, startPoint + datetime.timedelta(hours=1)*i, 
+        pointsToRemove += getAdjacentPoints(startPoint + datetime.timedelta(hours=1)*i, 
                             numCycles, hourChange=hoursPerCycle, dayChange=daysPerCycle)
 
     newDF = removePoints(df, colToRemove, pointsToRemove)
@@ -67,8 +76,16 @@ def removePointsInPattern(df, colToRemove, startPoint, cycleLength, numCycles=1,
 
 
 # assumes all missing timestamps in comparisonDF are also in df
-# TODO: docstring this
 def removeByDataframe(df, colToRemove, comparisonDF, timeshift=None):
+    """ 
+    removes all points in colToRemove that are NaN in comparisonDF
+
+    @param: df - the dataframe to copy and remove points from
+    @param: colToRemove - the name of the column from which to remove data (ex: 'Ozone')
+    @param: comparisonDF - the dataframe to copy removed points from
+    @param: timeshift - a timedelta to shift the timestamps to be removed by
+    @return: a new dataframe with the points 
+    """
     pointsToRemove = comparisonDF.loc[comparisonDF[colToRemove].isna()].index
     if timeshift is not None:
         pointsToRemove = list(map(lambda timestamp: timestamp+timeshift, pointsToRemove))
