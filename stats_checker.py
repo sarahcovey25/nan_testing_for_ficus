@@ -91,7 +91,7 @@ def getStatDF(predictedList, observed, names=None, timestampIndex=None, timesToT
         statDF[stat] = rmseList
         statDF[stat+" 95%"] = rmse95List
     
-        if timeToTest is not None:
+        if timesToTest is not None:
             for timeToTest in timesToTest:
                 rmseByHourList = []
 
