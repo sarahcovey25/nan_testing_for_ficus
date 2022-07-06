@@ -12,12 +12,12 @@ def rmseCheck(predicted, observed):
 
 def nmbCheck(predicted, observed):
     """ Calculates and returns the normalized mean bias of the predicted vs observed """
-    sumErrors = list(map(lambda x, y: x-y, predicted, observed))
+    sumErrors = sum(map(lambda x, y: x-y, predicted, observed))
     return 100*sumErrors/sum(observed)
 
 def nmeCheck(predicted, observed):
     """ Calculates and returns the normalized mean error of the predicted vs observed """
-    sumAbsErrors = list(map(lambda x, y: abs(x-y), predicted, observed))
+    sumAbsErrors = sum(map(lambda x, y: abs(x-y), predicted, observed))
     return 100*sumAbsErrors/sum(observed)
 
 def getStatistic(predicted, observed, statistic):
