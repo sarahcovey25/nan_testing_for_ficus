@@ -85,7 +85,7 @@ def getStatDF(predictedList, observed, names=None, timestampIndex=None, timesToT
         rmse95List = []
 
         for pred in predictedList:
-            rmseList.append(rmseCheck(pred, observed, statistic=stat))
+            rmseList.append(getStatistic(pred, observed, statistic=stat))
             rmse95List.append(check95(pred, observed, statistic=stat))
 
         statDF[stat] = rmseList
