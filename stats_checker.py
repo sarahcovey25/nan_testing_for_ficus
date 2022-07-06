@@ -17,7 +17,7 @@ def nmbCheck(predicted, observed):
 
 def nmeCheck(predicted, observed):
     """ Calculates and returns the normalized mean error of the predicted vs observed """
-    sumAbsErrors = list(map(lambda x, y: math.abs(x-y), predicted, observed))
+    sumAbsErrors = list(map(lambda x, y: abs(x-y), predicted, observed))
     return 100*sumAbsErrors/sum(observed)
 
 def getStatistic(predicted, observed, statistic):
