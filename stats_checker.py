@@ -98,7 +98,7 @@ def getStatDF(predictedList, observed, names=None, timestampIndex=None, timesToT
                 for pred in predictedList:
                     rmseByHourList.append(checkByTime(pred, observed, timestampIndex, timeToTest, statistic=stat))
 
-                statDF["RMSE Hour="+str(timeToTest)] = rmseByHourList
+                statDF[stat+" Hour="+str(timeToTest)] = rmseByHourList
 
     if names is not None:
         statDF['RF Test'] = names
