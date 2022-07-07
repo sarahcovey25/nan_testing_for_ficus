@@ -20,6 +20,16 @@ def nmeCheck(predicted, observed):
     sumAbsErrors = sum(map(lambda x, y: abs(x-y), predicted, observed))
     return 100*sumAbsErrors/sum(observed)
 
+def mb(predicted, observed):
+    """ Calculates and returns the mean bias of the predicted vs observed """
+    sumErrors = sum(map(lambda x, y: x-y, predicted, observed))
+    return sumErrors/len(observed)
+
+def me(predicted, observed):
+    """ Calculates and returns the mean error of the predicted vs observed """
+    sumAbsErrors = sum(map(lambda x, y: abs(x-y), predicted, observed))
+    return sumAbsErrors/len(observed)
+
 def getStatistic(predicted, observed, statistic):
     """ Calculates and returns the statistic of the predicted vs observed, specified by statistic """
     if statistic == "RMSE":
@@ -28,6 +38,10 @@ def getStatistic(predicted, observed, statistic):
         return nmbCheck(predicted, observed)
     elif statistic == "NME":
         return nmeCheck(predicted, observed)   
+    elif statistic == "MB":
+        return mb(predicted, observed)
+    elif statistic == "ME":
+        return me(predicted, observed)  
 
 def check95(predicted, observed, statistic="RMSE"):
     """ Calculates the specified statistic for all points above the 95th percentile """
