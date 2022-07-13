@@ -49,6 +49,8 @@ def getStatistic(predicted, observed, statistic):
         return mb(predicted, observed)
     elif statistic == "ME":
         return me(predicted, observed)
+    elif statistic == "CRMSE":
+        return crmse(predicted, observed)
 
 def check95(predicted, observed, statistic="RMSE"):
     """ Calculates the specified statistic for all points above the 95th percentile """
