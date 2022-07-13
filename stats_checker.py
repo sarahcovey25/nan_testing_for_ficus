@@ -5,43 +5,50 @@ import numpy as np
 
 
 
-def rmseCheck(predicted, observed):
-    """ Calculates and returns the root mean square error of the predicted vs observed """
+def rmse(predicted, observed):
+    """ Calculates and returns the root mean square error of the predicted vs observed lists """
     errorsSquared = list(map(lambda x, y: (x-y)**2, predicted, observed))
     return np.sqrt(np.mean(errorsSquared))
 
-def nmbCheck(predicted, observed):
-    """ Calculates and returns the normalized mean bias of the predicted vs observed """
+def nmb(predicted, observed):
+    """ Calculates and returns the normalized mean bias of the predicted vs observed lists """
     sumErrors = sum(map(lambda x, y: x-y, predicted, observed))
     return 100*sumErrors/sum(observed)
 
-def nmeCheck(predicted, observed):
-    """ Calculates and returns the normalized mean error of the predicted vs observed """
+def nme(predicted, observed):
+    """ Calculates and returns the normalized mean error of the predicted vs observed lists """
     sumAbsErrors = sum(map(lambda x, y: abs(x-y), predicted, observed))
     return 100*sumAbsErrors/sum(observed)
 
 def mb(predicted, observed):
-    """ Calculates and returns the mean bias of the predicted vs observed """
+    """ Calculates and returns the mean bias of the predicted vs observed lists """
     sumErrors = sum(map(lambda x, y: x-y, predicted, observed))
     return sumErrors/len(observed)
 
 def me(predicted, observed):
-    """ Calculates and returns the mean error of the predicted vs observed """
+    """ Calculates and returns the mean error of the predicted vs observed lists """
     sumAbsErrors = sum(map(lambda x, y: abs(x-y), predicted, observed))
     return sumAbsErrors/len(observed)
+
+def crmse(predicted, observed):
+    """ Calculates and returns the centered root mean square error of the predicted vs observed lists """
+    meanPred = np.mean(predicted)
+    meanObs = np.mean(observed)
+    centeredSquaredErrors = map(lambda p, o: ((p-meanPred)-(o-meanObs))**2 , predicted, observed)
+    return sum(centeredSquaredErrors)/len(observed)
 
 def getStatistic(predicted, observed, statistic):
     """ Calculates and returns the statistic of the predicted vs observed, specified by statistic """
     if statistic == "RMSE":
-        return rmseCheck(predicted, observed)
+        return rmse(predicted, observed)
     elif statistic == "NMB":
-        return nmbCheck(predicted, observed)
+        return nmb(predicted, observed)
     elif statistic == "NME":
-        return nmeCheck(predicted, observed)   
+        return nme(predicted, observed)   
     elif statistic == "MB":
         return mb(predicted, observed)
     elif statistic == "ME":
-        return me(predicted, observed)  
+        return me(predicted, observed)
 
 def check95(predicted, observed, statistic="RMSE"):
     """ Calculates the specified statistic for all points above the 95th percentile """
