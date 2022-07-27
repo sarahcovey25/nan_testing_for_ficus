@@ -104,15 +104,15 @@ def getStatDF(predictedList, observed, names=None, timestampIndex=None, timesToT
     statDF = pd.DataFrame()
 
     for stat in statsList:
-        rmseList = []
-        rmse95List = []
+        statList = []
+        stat95List = []
 
         for pred in predictedList:
-            rmseList.append(getStatistic(pred, observed, statistic=stat))
-            rmse95List.append(check95(pred, observed, statistic=stat))
+            statList.append(getStatistic(pred, observed, statistic=stat))
+            stat95List.append(check95(pred, observed, statistic=stat))
 
-        statDF[stat] = rmseList
-        statDF[stat+" 95%"] = rmse95List
+        statDF[stat] = statList
+        statDF[stat+" 95%"] = stat95List
     
         if timesToTest is not None:
             for timeToTest in timesToTest:
